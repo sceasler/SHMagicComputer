@@ -1,7 +1,7 @@
 """
 Template for all receiver formatters
 """
-
+import os
 from magic_computer_comms.controller.controller import Controller
 from magic_computer_comms.io.comm_server import ThreadedServer
 
@@ -19,6 +19,7 @@ class Receivers(object):
         """
         Begins to listen to receive events
         """
-        self.server.listen_to_client()
+        self.server.listen()
 
-
+        if os.environ["magic_computer_debug"] == "true":
+            print("Receiver listener started on port " + str(self.server.port))

@@ -3,6 +3,8 @@ Initiates app startup
 """
 import json
 import re
+import os
+import time
 from magic_computer_comms.data_model.views import Views
 from magic_computer_comms.data_model.locators import Locators
 from magic_computer_comms.data_model.receivers import Receivers
@@ -26,6 +28,11 @@ class Startup(object):
         #working_dir = sys.argv[0]
         with open('appsettings.json') as data_file:
             self.environment = json.load(data_file)
+
+        if "debug" in self.environment and self.environment["debug"] is True:
+            os.environ["magic_computer_debug"] = "true"
+        else:
+            os.environ["magic_computer_debug"] = "false"
 
     def get_environment(self):
         """
@@ -147,7 +154,7 @@ class Startup(object):
         ##################################
 
         ####Configuring the controller###
-        self.controller = Controller(self.locator, self.discriminator, self.algo, self.view)
+        self.controller: Controller = Controller(self.locator, self.discriminator, self.algo, self.view)
         #################################
 
         #####Configuring the receiver####
@@ -159,7 +166,7 @@ class Startup(object):
         self.receiver = klass(self.controller, r_host, r_port)
         #################################
 
-        #return (self.view, self.algo, self.discriminator, self.receiver)
+        return (self.receiver, self.locator, self.discriminator, self.algo, self.view)
 
     def start(self):
         """
@@ -167,3 +174,6 @@ class Startup(object):
         """
         self.controller.start()
         self.receiver.start()
+
+        while True:
+            time.sleep(20)

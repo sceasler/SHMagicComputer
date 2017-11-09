@@ -2,6 +2,7 @@
 Super-type of all locators
 """
 import asyncio
+import os
 from magic_computer_comms.io.comm_sender import ThreadedSender
 from magic_computer_comms.io.comm_server import ThreadedServer
 from magic_computer_comms.io.locator_request_types import RequestType
@@ -38,6 +39,17 @@ class Locators(object):
         self.received_data = self.parse_locator(message)
         self.waiting_on_data = False
 
+        if os.environ["magic_computer_debug"] == "true":
+            x_pos = self.received_data["posX"]
+            y_pos = self.received_data["posY"]
+            z_pos = self.received_data["posZ"]
+            x_rot = self.received_data["rotX"]
+            y_rot = self.received_data["rotY"]
+            z_rot = self.received_data["rotZ"]
+
+            print("viewer sent position data " + x_pos + ", " + y_pos + ", " + z_pos)
+            print("viewer sent rotation data " + x_rot + ", " + y_rot + ", " + z_rot)
+
     async def refresh_position_data(self):
         """
         Sends a request for updated location information, and awaits a response
@@ -54,9 +66,7 @@ class Locators(object):
         """
         Returns the last reported position
         """
-        if self.received_data is None:
-            return (0, 0, 0, 0, 0)
-        else:
+        if self.received_data is not None:
             return self.received_data
 
     def start(self):
@@ -64,3 +74,6 @@ class Locators(object):
         Starts the Locator listener
         """
         self.receiver.listen()
+
+        if os.environ["magic_computer_debug"] == "true":
+            print("locator listener started on port " + str(self.receiver.port))

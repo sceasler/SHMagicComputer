@@ -31,7 +31,8 @@ class ThreadedServer(object):
         """
         size = 1024
         while True:
-            data = self.sock.recv(size).decode()
+            raw_data = self.sock.recv(size)
+            data = raw_data.decode()
             self.processor(data)
 
             #(xpos, ypos, zpos, xrot, yrot, zrot) = self.parser.parseView(data)

@@ -2,6 +2,7 @@
 Defines the Controller
 """
 import asyncio
+import os
 from magic_computer_comms.data_model.algos import Algos
 from magic_computer_comms.data_model.discriminators import Discriminators
 from magic_computer_comms.data_model.views import Views

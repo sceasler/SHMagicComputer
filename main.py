@@ -5,6 +5,6 @@ from magic_computer_comms.startup import Startup
 
 APP = Startup()
 
-APP.configure()
+(RECEIVER, LOCATOR, DISCRIMINATOR, ALGO, VIEWER) = APP.configure()
 
 APP.start()

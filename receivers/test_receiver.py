@@ -2,7 +2,6 @@
 A test receiver formatter
 """
 
-import json
 import time
 #import asyncio
 from magic_computer_comms.data_model.receivers import Receivers
@@ -18,7 +17,7 @@ class TestReceiver(Receivers):
         """
         Test method to mock data from a receiver
         """
-        #data = json.load("{\"type\"=\"wifi\",\"snr\"=\"0.3444\",\"channel\"=2,\"ssid\"=\"something\"}")
+
         data = "test"
         while True:
             self.controller.process_signal_detect(data)
@@ -26,5 +25,5 @@ class TestReceiver(Receivers):
             #await asyncio.sleep(2)
 
     def start(self):
-        self.server.listen()
-        self.data_push()
+        super(TestReceiver, self).start()
+        #self.data_push()
