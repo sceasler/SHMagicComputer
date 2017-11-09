@@ -4,7 +4,6 @@ Listens for data from clients and sends input to processor
 
 import socket
 import threading
-from magic_computer_comms.data_model.views import Views
 
 class ThreadedServer(object):
     """
@@ -12,12 +11,13 @@ class ThreadedServer(object):
     Sends raw data to parser
     Passes parsed data to defined processor
     """
-    def __init__(self, host, port, parser: Views):
+
+    def __init__(self, host, port, processor):
         self.host = host
         self.port = port
-        self.parser = parser
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind((self.host, self.port))
+        self.processor = processor
 
     def listen(self):
         """
@@ -32,5 +32,7 @@ class ThreadedServer(object):
         size = 1024
         while True:
             data = self.sock.recv(size).decode()
-            (xpos, ypos, zpos, xrot, yrot, zrot) = self.parser.parseView(data)
+            self.processor(data)
+
+            #(xpos, ypos, zpos, xrot, yrot, zrot) = self.parser.parseView(data)
             #processor not defined yet
