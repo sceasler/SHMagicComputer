@@ -24,6 +24,6 @@ class TestReceiver(Receivers):
             time.sleep(2)
             #await asyncio.sleep(2)
 
-    def start(self):
-        super(TestReceiver, self).start()
+    #def start(self):
+    #    super(TestReceiver, self).start()
         #self.data_push()
