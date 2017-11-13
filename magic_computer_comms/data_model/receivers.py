@@ -11,7 +11,10 @@ class Receivers(object):
     convert data from a receiver into a common format and
     notify the controller of a detect event
     """
-    def __init__(self, controller: Controller, host, port):
+    def __init__(self, controller: Controller, options):
+        host = options["receiver_host"]
+        port = int(options["receiver_port"])
+
         self.controller = controller
         self.server = ThreadedServer(host, port, self.controller.process_signal_detect)
 

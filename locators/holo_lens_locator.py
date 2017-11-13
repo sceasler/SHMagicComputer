@@ -11,8 +11,8 @@ class HoloLensLocator(Locators):
     Defines the interface for the HoloLens location service
     """
 
-    def __init__(self, r_host: str, r_port: int, s_host: str, s_port: int):
-        super(HoloLensLocator, self).__init__(r_host=r_host, r_port=r_port, s_host=s_host, s_port=s_port)
+    def __init__(self, options):
+        super(HoloLensLocator, self).__init__(options)
 
     def parse_locator(self, message: str):
         message_json = json.loads(message)

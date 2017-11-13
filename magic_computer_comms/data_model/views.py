@@ -8,7 +8,10 @@ class Views(object):
     """
     All views inherit from this class for their method list
     """
-    def __init__(self, host: str, port: int):
+    def __init__(self, options):
+        host = options["view_host"]
+        port = int(options["view_port"])
+
         self.sender = ThreadedSender(host, port)
 
     def update_view(self, pertinent_signal, refined_position):

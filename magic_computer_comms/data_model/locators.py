@@ -12,7 +12,20 @@ class Locators(object):
     All locators inherit from this class for their method list
     """
 
-    def __init__(self, r_host: str, r_port: int, s_host: str, s_port: int):
+    def __init__(self, options):
+
+        if "send_host" in options:
+            s_host = options["send_host"]
+        else:
+            s_host = None
+
+        if "send_port" in options:
+            s_port = int(options["send_port"])
+        else:
+            s_port = None
+
+        r_host = options["receive_host"]
+        r_port = int(options["receive_port"])
 
         if not (s_host is None or s_port is None):
             self.sender = ThreadedSender(s_host, s_port)

@@ -48,7 +48,7 @@ class Startup(object):
     def __load_view__(self):
         ret_val: Views
 
-        parser_class_name = self.environment["view"]["name"] + "View"
+        parser_class_name = self.environment["view"]["type"] + "View"
 
         parser_str = self.__to_snake_case__(parser_class_name)
 
@@ -59,7 +59,7 @@ class Startup(object):
     def __load_locator__(self):
         ret_val: Locators
 
-        locator_class_name = self.environment["locator"]["name"] + "Locator"
+        locator_class_name = self.environment["locator"]["type"] + "Locator"
 
         locator_str = self.__to_snake_case__(locator_class_name)
 
@@ -70,7 +70,7 @@ class Startup(object):
     def __load_receiver__(self):
         ret_val: Receivers
 
-        receiver_class_name = self.environment["receiver"]["name"] + "Receiver"
+        receiver_class_name = self.environment["receiver"]["type"] + "Receiver"
         receiver_str = self.__to_snake_case__(receiver_class_name)
         ret_val = self.__string_import__("receivers." + receiver_str + "." + receiver_class_name)
 
@@ -79,7 +79,7 @@ class Startup(object):
     def __load_algo__(self):
         ret_val: Algos
 
-        algo_class_name = self.environment["algo"]["name"] + "Algo"
+        algo_class_name = self.environment["algo"]["type"] + "Algo"
         algo_str = self.__to_snake_case__(algo_class_name)
         ret_val = self.__string_import__("algos." + algo_str + "." + algo_class_name)
 
@@ -88,7 +88,7 @@ class Startup(object):
     def __load_discriminator__(self):
         ret_val: Discriminators
 
-        discrim_class_name = self.environment["discriminator"]["name"] + "Discriminator"
+        discrim_class_name = self.environment["discriminator"]["type"] + "Discriminator"
         discrim_str = self.__to_snake_case__(discrim_class_name)
         ret_val = self.__string_import__("discriminators." + discrim_str + "." + discrim_class_name)
 
@@ -112,12 +112,9 @@ class Startup(object):
         ##################################
 
         ######Configuring the viewer######
-        view_host: str = self.environment["view"]["view_host"]
-        view_port: int = self.environment["view"]["view_port"]
-
         klass = self.__load_view__()
 
-        self.view = klass(view_host, view_port)
+        self.view = klass(self.environment["view"]["options"])
         ##################################
 
         #####Configuring the df algo#####
@@ -133,24 +130,9 @@ class Startup(object):
         #################################
 
         #####Configuring the locator######
-        r_host: str = self.environment["locator"]["receive_host"]
-        r_port: int = self.environment["locator"]["receive_port"]
-
-        if "locator_host" in self.environment["locator"]:
-            l_host: str = self.environment["locator"]["locator_host"]
-        else:
-            l_host: None
-
-        if "locator_port" in self.environment["locator"]:
-            l_port: int = self.environment["locator"]["locator_port"]
-        else:
-            l_port: None
-
-        l_host: str = self.environment["locator"]["receive_host"]
-        l_port: int = self.environment["locator"]["receive_port"]
         klass = self.__load_locator__()
 
-        self.locator = klass(r_host=r_host, r_port=r_port, s_host=l_host, s_port=l_port)
+        self.locator = klass(self.environment["locator"]["options"])
         ##################################
 
         ####Configuring the controller###
@@ -160,10 +142,7 @@ class Startup(object):
         #####Configuring the receiver####
         klass = self.__load_receiver__()
 
-        r_host: str = self.environment["receiver"]["receiver_host"]
-        r_port: str = self.environment["receiver"]["receiver_port"]
-
-        self.receiver = klass(self.controller, r_host, r_port)
+        self.receiver = klass(self.controller, self.environment["receiver"]["options"])
         #################################
 
         return (self.receiver, self.locator, self.discriminator, self.algo, self.view)
