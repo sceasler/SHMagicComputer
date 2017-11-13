@@ -12,17 +12,11 @@ class Receivers(object):
     notify the controller of a detect event
     """
     def __init__(self, controller: Controller, options):
-        host = options["receiver_host"]
-        port = int(options["receiver_port"])
-
         self.controller = controller
-        self.server = ThreadedServer(host, port, self.controller.process_signal_detect)
+        self.options = options
 
     def start(self):
         """
         Begins to listen to receive events
         """
-        self.server.listen()
-
-        if os.environ["magic_computer_debug"] == "true":
-            print("Receiver listener started on port " + str(self.server.port))
+        pass

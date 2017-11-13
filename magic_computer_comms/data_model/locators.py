@@ -1,11 +1,7 @@
 """
 Super-type of all locators
 """
-import asyncio
 import os
-from magic_computer_comms.io.comm_sender import ThreadedSender
-from magic_computer_comms.io.comm_server import ThreadedServer
-from magic_computer_comms.io.locator_request_types import RequestType
 
 class Locators(object):
     """
@@ -13,26 +9,9 @@ class Locators(object):
     """
 
     def __init__(self, options):
-
-        if "send_host" in options:
-            s_host = options["send_host"]
-        else:
-            s_host = None
-
-        if "send_port" in options:
-            s_port = int(options["send_port"])
-        else:
-            s_port = None
-
-        r_host = options["receive_host"]
-        r_port = int(options["receive_port"])
-
-        if not (s_host is None or s_port is None):
-            self.sender = ThreadedSender(s_host, s_port)
-
         self.received_data = None
         self.waiting_on_data = False
-        self.receiver = ThreadedServer(r_host, r_port, self.receive_data)
+        self.options = options
 
     def parse_locator(self, message):
         """
@@ -63,17 +42,17 @@ class Locators(object):
             print("viewer sent position data " + x_pos + ", " + y_pos + ", " + z_pos)
             print("viewer sent rotation data " + x_rot + ", " + y_rot + ", " + z_rot)
 
-    async def refresh_position_data(self):
-        """
-        Sends a request for updated location information, and awaits a response
-        """
-        self.waiting_on_data = True
-        self.send_request(RequestType.positionandrotation, '')
+    # async def refresh_position_data(self):
+    #     """
+    #     Sends a request for updated location information, and awaits a response
+    #     """
+    #     self.waiting_on_data = True
+    #     self.send_request(RequestType.positionandrotation, '')
 
-        while self.waiting_on_data:
-            await asyncio.sleep(.005)
+    #     while self.waiting_on_data:
+    #         await asyncio.sleep(.005)
 
-        return self.get_position_data()
+    #     return self.get_position_data()
 
     def get_position_data(self):
         """
@@ -86,7 +65,4 @@ class Locators(object):
         """
         Starts the Locator listener
         """
-        self.receiver.listen()
-
-        if os.environ["magic_computer_debug"] == "true":
-            print("locator listener started on port " + str(self.receiver.port))
+        pass

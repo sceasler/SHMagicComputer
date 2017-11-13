@@ -8,8 +8,9 @@ class Algos(object):
     """
     Algos template.  All algo implementations should inherit from this
     """
-    def __init__(self, signal_datastore: SignalDatastore):
+    def __init__(self, signal_datastore: SignalDatastore, options):
         self.signal_datastore = signal_datastore
+        self.options = options
 
     def refine_position(self, signal_id, position_data):
         """

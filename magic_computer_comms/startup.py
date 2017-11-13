@@ -114,25 +114,45 @@ class Startup(object):
         ######Configuring the viewer######
         klass = self.__load_view__()
 
-        self.view = klass(self.environment["view"]["options"])
+        if "options" in self.environment["view"]:
+            options = self.environment["view"]["options"]
+        else:
+            options = None
+
+        self.view = klass(options)
         ##################################
 
         #####Configuring the df algo#####
         klass = self.__load_algo__()
 
-        self.algo = klass(datastore)
+        if "options" in self.environment["algo"]:
+            options = self.environment["algo"]["options"]
+        else:
+            options = None
+
+        self.algo = klass(datastore, options)
         #################################
 
         ##Configuring the discriminator##
         klass = self.__load_discriminator__()
 
-        self.discriminator = klass(datastore)
+        if "options" in self.environment["discriminator"]:
+            options = self.environment["discriminator"]["options"]
+        else:
+            options = None
+
+        self.discriminator = klass(datastore, options)
         #################################
 
         #####Configuring the locator######
         klass = self.__load_locator__()
 
-        self.locator = klass(self.environment["locator"]["options"])
+        if "options" in self.environment["locator"]:
+            options = self.environment["locator"]["options"]
+        else:
+            options = None
+
+        self.locator = klass(options)
         ##################################
 
         ####Configuring the controller###
@@ -142,7 +162,12 @@ class Startup(object):
         #####Configuring the receiver####
         klass = self.__load_receiver__()
 
-        self.receiver = klass(self.controller, self.environment["receiver"]["options"])
+        if "options" in self.environment["receiver"]:
+            options = self.environment["receiver"]["options"]
+        else:
+            options = None
+
+        self.receiver = klass(self.controller, options)
         #################################
 
         return (self.receiver, self.locator, self.discriminator, self.algo, self.view)

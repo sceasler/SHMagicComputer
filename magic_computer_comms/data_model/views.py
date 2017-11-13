@@ -13,6 +13,7 @@ class Views(object):
         port = int(options["view_port"])
 
         self.sender = ThreadedSender(host, port)
+        self.options = options
 
     def update_view(self, pertinent_signal, refined_position):
         """

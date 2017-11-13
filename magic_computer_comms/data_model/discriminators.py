@@ -9,8 +9,9 @@ class Discriminators(object):
     """
     Template discriminator.  All discriminators inherit from this
     """
-    def __init__(self, signal_datastore: SignalDatastore):
+    def __init__(self, signal_datastore: SignalDatastore, options):
         self.signal_datastore = signal_datastore
+        self.options = options
 
     def get_pertinent_signal(self, position_data, signal_data):
         """
