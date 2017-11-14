@@ -15,7 +15,7 @@ class ThreadedSender(object):
         self.port = port
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-    async def send_to_client(self, message):
+    def send_to_client(self, message):
         """
         Synchronous send of message to host
         """
