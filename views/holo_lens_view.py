@@ -16,4 +16,4 @@ class HoloLensView(Views):
         refined_position["signalId"] = pertinent_signal
         refined_position["messageType"] = "PosUpdate"
 
-        self.sender.send_to_client_async(json.dumps(refined_position))
+        self.sender.send_to_client_async(json.dumps(refined_position).encode('utf_8'))
