@@ -43,9 +43,12 @@ class Locators(object):
             rot_x = self.received_data["rotX"]
             rot_y = self.received_data["rotY"]
             rot_z = self.received_data["rotZ"]
+            loc_id = self.received_data["id"]
 
-            print("viewer sent position data " + pos_x + ", " + pos_y + ", " + pos_z)
-            print("viewer sent rotation data " + rot_x + ", " + rot_y + ", " + rot_z)
+            message = "locator " + loc_id + " sent location " + pos_x + ", " + pos_y + ", " + pos_z
+            message += ", " + rot_x + ", " + rot_y + ", " + rot_z
+
+            print(message)
 
     async def refresh_position_data(self):
         """
