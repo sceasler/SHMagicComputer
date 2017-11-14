@@ -19,11 +19,11 @@ class SignalDatastore(object):
         """
         Adds new position data.
 
-        receiver_data is a tuple:
-        (x_position, y_position, z_position, horiz_angle, vert_angle)
+        receiver_data is a dictionary:
+        {id, posX, posY, posZ, rotX, rotY, rotZ}
 
-        calculated_position is a tuple:
-        (x_position, y_position, z_position)
+        calculated_position is a dictionary:
+        {posX, posY, posZ}
         """
         if not name in self.__datastore:
             self.new_signal(name)
@@ -32,7 +32,8 @@ class SignalDatastore(object):
 
     def get_latest_position(self, name):
         """
-        Gets the last position tuple
+        Gets the last position.  Data is returned as a tuple of
+        the calculated position, and the receiver id and position that detected it
         """
         data_length = len(self.__datastore[name])
         return self.__datastore[name][data_length - 1]
@@ -42,3 +43,10 @@ class SignalDatastore(object):
         Returns the entire array of position data for a signal
         """
         return self.__datastore[name]
+
+    def get_signal_names(self):
+        """
+        Returns the names of every known signal
+        """
+
+        return self.__datastore.keys()

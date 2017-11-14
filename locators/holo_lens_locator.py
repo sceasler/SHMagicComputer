@@ -35,6 +35,15 @@ class HoloLensLocator(Locators):
 
         self.receiver = ThreadedServer(r_host, r_port, self.receive_data)
 
+        self.received_data = {}
+        self.received_data["posX"] = 0
+        self.received_data["posY"] = 0
+        self.received_data["posZ"] = 0
+        self.received_data["rotX"] = 0
+        self.received_data["rotY"] = 0
+        self.received_data["rotZ"] = 0
+        self.received_data["id"] = "None"
+
     def parse_locator(self, message: str):
         message_json = json.loads(message)
 

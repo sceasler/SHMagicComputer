@@ -3,6 +3,7 @@ Implementation of the viewer for Microsoft HoloLens
 """
 
 import json
+import os
 from magic_computer_comms.data_model.views import Views
 
 class HoloLensView(Views):
@@ -10,15 +11,9 @@ class HoloLensView(Views):
     Provides formatting data for sending data to the HoloLens
     """
     def update_view(self, pertinent_signal, refined_position):
-        xpos = str(refined_position[0])
-        ypos = str(refined_position[1])
-        zpos = str(refined_position[2])
+        super(HoloLensView, self).update_view(pertinent_signal, refined_position)
 
-        message = {}
-        message["posX"] = xpos
-        message["posY"] = ypos
-        message["posZ"] = zpos
-        message["signalId"] = pertinent_signal
-        message["messageType"] = "PosUpdate"
+        refined_position["signalId"] = pertinent_signal
+        refined_position["messageType"] = "PosUpdate"
 
-        self.sender.send_to_client_async(json.dumps(message))
+        self.sender.send_to_client_async(json.dumps(refined_position))

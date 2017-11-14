@@ -8,4 +8,8 @@ class TestAlgo(Algos):
     test algo implementation
     """
     def refine_position(self, signal_id, position_data):
-        return (0, 0, 0)
+        calculated_position = {"posX": 0, "posY": 0, "posZ": 0}
+
+        self.signal_datastore.update_position(signal_id, position_data, calculated_position)
+
+        return calculated_position

@@ -37,3 +37,5 @@ class TestReceiver(Receivers):
 
         if os.environ["magic_computer_debug"] == "true":
             print("Receiver listener started on port " + str(self.server.port))
+
+        self.data_push()

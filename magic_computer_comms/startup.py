@@ -45,52 +45,53 @@ class Startup(object):
         temp_string = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', item)
         return re.sub('([a-z0-9])([A-Z])', r'\1_\2', temp_string).lower()
 
-    def __load_view__(self):
+    @staticmethod
+    def __load_view__(view_type):
         ret_val: Views
 
-        parser_class_name = self.environment["view"]["type"] + "View"
-
-        parser_str = self.__to_snake_case__(parser_class_name)
-
-        ret_val = self.__string_import__("views." + parser_str + "." + parser_class_name)
+        parser_class_name = view_type + "View"
+        parser_str = Startup.__to_snake_case__(parser_class_name)
+        ret_val = Startup.__string_import__("views." + parser_str + "." + parser_class_name)
 
         return ret_val
 
-    def __load_locator__(self):
+    @staticmethod
+    def __load_locator__(locator_type):
         ret_val: Locators
 
-        locator_class_name = self.environment["locator"]["type"] + "Locator"
-
-        locator_str = self.__to_snake_case__(locator_class_name)
-
-        ret_val = self.__string_import__("locators." + locator_str + "." + locator_class_name)
+        locator_class_name = locator_type + "Locator"
+        locator_str = Startup.__to_snake_case__(locator_class_name)
+        ret_val = Startup.__string_import__("locators." + locator_str + "." + locator_class_name)
 
         return ret_val
 
-    def __load_receiver__(self):
+    @staticmethod
+    def __load_receiver__(receiver_type):
         ret_val: Receivers
 
-        receiver_class_name = self.environment["receiver"]["type"] + "Receiver"
-        receiver_str = self.__to_snake_case__(receiver_class_name)
-        ret_val = self.__string_import__("receivers." + receiver_str + "." + receiver_class_name)
+        receiver_class_name = receiver_type + "Receiver"
+        receiver_str = Startup.__to_snake_case__(receiver_class_name)
+        ret_val = Startup.__string_import__("receivers." + receiver_str + "." + receiver_class_name)
 
         return ret_val
 
-    def __load_algo__(self):
+    @staticmethod
+    def __load_algo__(algo_type):
         ret_val: Algos
 
-        algo_class_name = self.environment["algo"]["type"] + "Algo"
-        algo_str = self.__to_snake_case__(algo_class_name)
-        ret_val = self.__string_import__("algos." + algo_str + "." + algo_class_name)
+        algo_class_name = algo_type + "Algo"
+        algo_str = Startup.__to_snake_case__(algo_class_name)
+        ret_val = Startup.__string_import__("algos." + algo_str + "." + algo_class_name)
 
         return ret_val
 
-    def __load_discriminator__(self):
+    @staticmethod
+    def __load_discriminator__(disrim_type):
         ret_val: Discriminators
 
-        discrim_class_name = self.environment["discriminator"]["type"] + "Discriminator"
-        discrim_str = self.__to_snake_case__(discrim_class_name)
-        ret_val = self.__string_import__("discriminators." + discrim_str + "." + discrim_class_name)
+        discrim_class_name = disrim_type + "Discriminator"
+        discrim_str = Startup.__to_snake_case__(discrim_class_name)
+        ret_val = Startup.__string_import__("discriminators." + discrim_str + "." + discrim_class_name)
 
         return ret_val
 
@@ -112,7 +113,7 @@ class Startup(object):
         ##################################
 
         ######Configuring the viewer######
-        klass = self.__load_view__()
+        klass = self.__load_view__(self.environment["view"]["type"])
 
         if "options" in self.environment["view"]:
             options = self.environment["view"]["options"]
@@ -123,7 +124,7 @@ class Startup(object):
         ##################################
 
         #####Configuring the df algo#####
-        klass = self.__load_algo__()
+        klass = self.__load_algo__(self.environment["algo"]["type"])
 
         if "options" in self.environment["algo"]:
             options = self.environment["algo"]["options"]
@@ -134,7 +135,7 @@ class Startup(object):
         #################################
 
         ##Configuring the discriminator##
-        klass = self.__load_discriminator__()
+        klass = self.__load_discriminator__(self.environment["discriminator"]["type"])
 
         if "options" in self.environment["discriminator"]:
             options = self.environment["discriminator"]["options"]
@@ -145,7 +146,7 @@ class Startup(object):
         #################################
 
         #####Configuring the locator######
-        klass = self.__load_locator__()
+        klass = self.__load_locator__(self.environment["locator"]["type"])
 
         if "options" in self.environment["locator"]:
             options = self.environment["locator"]["options"]
@@ -160,7 +161,7 @@ class Startup(object):
         #################################
 
         #####Configuring the receiver####
-        klass = self.__load_receiver__()
+        klass = self.__load_receiver__(self.environment["receiver"]["type"])
 
         if "options" in self.environment["receiver"]:
             options = self.environment["receiver"]["options"]

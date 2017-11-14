@@ -1,7 +1,7 @@
 """
 Super-type of all views
 """
-
+import os
 from magic_computer_comms.io.comm_sender import ThreadedSender
 
 class Views(object):
@@ -19,4 +19,11 @@ class Views(object):
         """
         Provides logic for formatting requests
         """
-        pass
+        if os.environ["magic_computer_debug"] == "true":
+            xpos = refined_position["posX"]
+            ypos = refined_position["posY"]
+            zpos = refined_position["posZ"]
+
+            pos_string = str(xpos) + ", " + str(ypos) + ", " + str(zpos)
+
+            print("Sending position update for signal " + pertinent_signal + " of " + pos_string)
