@@ -3,6 +3,7 @@ Implementation of the viewer for Microsoft HoloLens
 """
 
 import json
+import os
 from magic_computer_comms.data_model.views import Views
 from magic_computer_comms.io.comm_sender import ThreadedSender
 
@@ -17,6 +18,9 @@ class HoloLensView(Views):
         port = int(options["view_port"])
 
         self.sender = ThreadedSender(host, port)
+
+        if os.environ['magic_computer_debug'] == "true":
+            print("set up to use view at " + host + ":" + str(port) + " using UDP")
 
     def update_view(self, pertinent_signal, refined_position):
         super(HoloLensView, self).update_view(pertinent_signal, refined_position)
