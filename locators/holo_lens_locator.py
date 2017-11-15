@@ -33,6 +33,9 @@ class HoloLensLocator(Locators):
         if not (s_host is None or s_port is None):
             self.sender = ThreadedSender(s_host, s_port)
 
+            if os.environ['magic_computer-debug'] == "true":
+                print("Set up to send locator requests to UDP " + s_host + ":" + s_port)
+
         self.receiver = ThreadedServer(r_host, r_port, self.receive_data)
 
         self.received_data = {}
