@@ -181,4 +181,4 @@ class Startup(object):
         self.receiver.start()
 
         while True:
-            time.sleep(20)
+            time.sleep(7200)

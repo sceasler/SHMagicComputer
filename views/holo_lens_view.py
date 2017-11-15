@@ -3,13 +3,21 @@ Implementation of the viewer for Microsoft HoloLens
 """
 
 import json
-import os
 from magic_computer_comms.data_model.views import Views
+from magic_computer_comms.io.comm_sender import ThreadedSender
 
 class HoloLensView(Views):
     """
     Provides formatting data for sending data to the HoloLens
     """
+    def __init__(self, options):
+        super(HoloLensView, self).__init__(options)
+
+        host = options["view_host"]
+        port = int(options["view_port"])
+
+        self.sender = ThreadedSender(host, port)
+
     def update_view(self, pertinent_signal, refined_position):
         super(HoloLensView, self).update_view(pertinent_signal, refined_position)
 
