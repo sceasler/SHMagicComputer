@@ -7,4 +7,6 @@ APP = Startup()
 
 (RECEIVER, LOCATOR, DISCRIMINATOR, ALGO, VIEWER) = APP.configure()
 
+#Any additional configurations for the returned components can go here
+
 APP.start()

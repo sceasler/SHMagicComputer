@@ -1,9 +1,8 @@
 """
 Template for all receiver formatters
 """
-import os
+
 from magic_computer_comms.controller.controller import Controller
-from magic_computer_comms.io.comm_server import ThreadedServer
 
 class Receivers(object):
     """
