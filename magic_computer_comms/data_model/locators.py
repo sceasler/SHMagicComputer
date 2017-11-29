@@ -14,18 +14,28 @@ class Locators(object):
         self.waiting_on_data = False
         self.options = options
 
-    def parse_locator(self, message):
+    def parse_locator(self, message) -> dict:
         """
         Provides logic for parsing received messages
 
-        The parser should present the data in a dictionary:
+        Output must be a dictionary with the following fields:
+        (need to define the position/rotation values as well)
+        posX: X position
+        posY: Y position
+        posZ: Z position
+        rotX: X rotation
+        rotY: Y rotation
+        rotZ: Z rotation
+        id: The id of the locator
 
-        {posX, posY, posZ, rotX, rotY, rotZ}
         """
 
     def send_request(self, request_type, parameters):
         """
         Provides logic for formatting requests
+
+        This is used if the data is not pushed to the server,
+        and the server needs to request the data
         """
         pass
 
@@ -62,7 +72,7 @@ class Locators(object):
 
         return self.get_position_data()
 
-    def get_position_data(self):
+    def get_position_data(self) -> dict:
         """
         Returns the last reported position
         """

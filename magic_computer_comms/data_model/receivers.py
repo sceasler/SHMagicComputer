@@ -10,7 +10,7 @@ class Receivers(object):
     convert data from a receiver into a common format and
     notify the controller of a detect event
     """
-    def __init__(self, controller: Controller, options):
+    def __init__(self, controller: Controller, options: dict):
         self.controller = controller
         self.options = options
 

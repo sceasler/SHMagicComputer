@@ -12,8 +12,13 @@ class Algos(object):
         self.signal_datastore = signal_datastore
         self.options = options
 
-    def refine_position(self, signal_id, position_data):
+    def refine_position(self, signal_id: str, position_data: dict) -> dict:
         """
         Executes refinement algorithm and returns updated position data
+
+        return value is a dictionary with the following fields:
+        posX,
+        posY,
+        posZ
         """
         pass

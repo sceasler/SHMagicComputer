@@ -13,8 +13,10 @@ class Discriminators(object):
         self.signal_datastore = signal_datastore
         self.options = options
 
-    def get_pertinent_signal(self, position_data, signal_data):
+    def get_pertinent_signal(self, position_data: dict, signal_data: dict) -> str:
         """
         Method to determine which signal was detected
+
+        This method must return a string labeling the signal name
         """
         pass
