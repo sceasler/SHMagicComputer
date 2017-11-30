@@ -22,7 +22,7 @@ class ThreadedSender(object):
 
         self.sock.sendto(message, (self.host, self.port))
 
-    def send_to_client_async(self, message):
+    def send_to_client_async(self, message: bytearray):
         """
         Asynchronous send of message to host
         """

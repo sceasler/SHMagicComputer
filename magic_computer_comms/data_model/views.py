@@ -10,7 +10,7 @@ class Views(object):
     def __init__(self, options: dict):
         self.options = options
 
-    def update_view(self, pertinent_signal: str, refined_position: dict):
+    def update_view(self, pertinent_signal: str, refined_position: dict) -> None:
         """
         Provides logic for formatting requests
         """

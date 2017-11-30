@@ -29,8 +29,9 @@ class Locators(object):
         id: The id of the locator
 
         """
+        pass
 
-    def send_request(self, request_type, parameters):
+    def send_request(self, request_type: RequestType, parameters) -> None:
         """
         Provides logic for formatting requests
 
@@ -39,7 +40,7 @@ class Locators(object):
         """
         pass
 
-    def receive_data(self, message):
+    def receive_data(self, message) -> None:
         """
         Method called when the server receives data from the locator
         """
@@ -60,7 +61,7 @@ class Locators(object):
 
             print(message)
 
-    async def refresh_position_data(self):
+    async def refresh_position_data(self) -> dict:
         """
         Sends a request for updated location information, and awaits a response
         """
@@ -79,7 +80,7 @@ class Locators(object):
         if self.received_data is not None:
             return self.received_data
 
-    def start(self):
+    def start(self) -> None:
         """
         Starts the Locator listener
         """

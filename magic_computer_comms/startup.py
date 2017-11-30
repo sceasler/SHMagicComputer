@@ -104,7 +104,7 @@ class Startup(object):
 
         return mod
 
-    def configure(self):
+    def configure(self) -> (Receivers, Locators, Discriminators, Algos, Views):
         """
         configures services
         """

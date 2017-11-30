@@ -14,7 +14,7 @@ class Receivers(object):
         self.controller = controller
         self.options = options
 
-    def start(self):
+    def start(self) -> None:
         """
         Begins to listen to receive events
         """

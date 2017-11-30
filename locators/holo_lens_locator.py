@@ -47,8 +47,10 @@ class HoloLensLocator(Locators):
         self.received_data["rotZ"] = 0
         self.received_data["id"] = "None"
 
-    def parse_locator(self, message: str):
-        message_json = json.loads(message)
+    def parse_locator(self, message: bytearray):
+        #parse into string
+        message_string = message.decode('utf_8')
+        message_json = json.loads(message_string)
 
         if message_json.MessageType == "PosRotMsg":
             return message_json
