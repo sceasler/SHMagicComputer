@@ -52,7 +52,7 @@ class HoloLensLocator(Locators):
         message_string = message.decode('utf_8')
         message_json = json.loads(message_string)
 
-        if message_json.MessageType == "PosRotMsg":
+        if message_json["msgType"] == "PosRotMsg":
             return message_json
 
         return None

@@ -56,8 +56,8 @@ class Locators(object):
             rot_z = self.received_data["rotZ"]
             loc_id = self.received_data["id"]
 
-            message = "locator " + loc_id + " sent location " + pos_x + ", " + pos_y + ", " + pos_z
-            message += ", " + rot_x + ", " + rot_y + ", " + rot_z
+            message = "locator " + str(loc_id) + " sent location " + str(pos_x) + ", " + str(pos_y) + ", " + str(pos_z)
+            message += ", " + str(rot_x) + ", " + str(rot_y) + ", " + str(rot_z)
 
             print(message)
 

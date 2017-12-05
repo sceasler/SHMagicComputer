@@ -26,7 +26,7 @@ class TestReceiver(Receivers):
         data = "test"
         while True:
             self.controller.process_signal_detect(data)
-            time.sleep(2)
+            time.sleep(1)
             #await asyncio.sleep(2)
 
     def start(self):

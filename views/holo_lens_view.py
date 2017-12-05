@@ -25,7 +25,7 @@ class HoloLensView(Views):
     def update_view(self, pertinent_signal, refined_position):
         super(HoloLensView, self).update_view(pertinent_signal, refined_position)
 
-        refined_position["signalId"] = pertinent_signal
-        refined_position["messageType"] = "PosUpdate"
+        refined_position["id"] = pertinent_signal #["messageType"]
+        refined_position["messageType"] = "PosUpdate" #"PosUpdate"
 
         self.sender.send_to_client(json.dumps(refined_position).encode('utf_8'))

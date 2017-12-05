@@ -11,6 +11,8 @@ class TestDiscriminator(Discriminators):
     def get_pertinent_signal(self, position_data, signal_data):
         signals = self.signal_datastore.get_signal_names()
 
+        return str(1)
+
         for signal in signals:
             if self.signal_datastore.get_latest_position(signal)[0]["posX"] == 0:
                 return signal
