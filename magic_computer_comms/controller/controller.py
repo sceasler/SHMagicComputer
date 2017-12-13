@@ -33,11 +33,7 @@ class Controller(object):
         """
         Called by the receiver when new signal data is available
         """
-        loop = asyncio.new_event_loop()
 
-        # if loop.is_closed():
-        #     loop = asyncio.new_event_loop()
-        #     asyncio.set_event_loop(loop)
+        loop = asyncio.get_event_loop()
 
         loop.run_until_complete(self.__process_signal_detect__(signal_data))
-        loop.close()
