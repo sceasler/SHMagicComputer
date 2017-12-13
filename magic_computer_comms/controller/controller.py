@@ -25,8 +25,20 @@ class Controller(object):
 
     async def __process_signal_detect__(self, signal_data):
         position_data = self.locator.get_position_data()
+
+        if position_data is None:
+            return
+
         pertinent_signal = self.discriminator.get_pertinent_signal(position_data, signal_data)
+
+        if pertinent_signal is None:
+            return
+
         refined_position = self.algo.refine_position(pertinent_signal, position_data)
+
+        if refined_position is None:
+            return
+
         self.viewer.update_view(pertinent_signal, refined_position)
 
     def process_signal_detect(self, signal_data):
