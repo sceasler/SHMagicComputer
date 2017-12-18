@@ -2,9 +2,10 @@
 Superclass for all algo implementations
 """
 
+from magic_computer_comms.data_model.listener_subscriber import ListenerSubscriber
 from magic_computer_comms.datastore.signal_datastore import SignalDatastore
 
-class Algos(object):
+class Algos(ListenerSubscriber):
     """
     Algos template.  All algo implementations should inherit from this
     """

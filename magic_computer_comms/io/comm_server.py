@@ -23,9 +23,9 @@ class ThreadedServer(object):
         """
         Starts thread that listens for communication on UDP port
         """
-        threading.Thread(target=self.listen_to_client).start()
+        threading.Thread(target=self.__listen_to_client).start()
 
-    def listen_to_client(self):
+    def __listen_to_client(self):
         """
         Loops through receiving data to pass to parser and processor
         """

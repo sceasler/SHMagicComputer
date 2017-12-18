@@ -5,6 +5,10 @@ import json
 import re
 import os
 import time
+from typing import Callable
+from typing import Dict
+from typing import List
+from magic_computer_comms.data_model.listener_subscriber import ListenerSubscriber
 from magic_computer_comms.data_model.views import Views
 from magic_computer_comms.data_model.locators import Locators
 from magic_computer_comms.data_model.receivers import Receivers
@@ -12,20 +16,31 @@ from magic_computer_comms.controller.controller import Controller
 from magic_computer_comms.data_model.algos import Algos
 from magic_computer_comms.data_model.discriminators import Discriminators
 from magic_computer_comms.datastore.signal_datastore import SignalDatastore
+from magic_computer_comms.io.listener import Listener
+
 
 class Startup(object):
     """
     Provides methods for startup of application
     """
-    view: Views
-    algo: None
-    receiver: Receivers
-    discriminator: None
-    locator: Locators
+    views: List[Views]
+    algo: Algos
+    receivers: List[Receivers]
+    discriminator: Discriminators
+    locators: List[Locators]
     controller: Controller
+    listener: Listener
+    listener_callbacks: Dict[str, Callable[[str], None]]
+    datastore: SignalDatastore
 
     def __init__(self):
         #working_dir = sys.argv[0]
+        self.listener = None
+        self.views = list()
+        self.receivers = list()
+        self.locators = list()
+        self.listener_callbacks = dict()
+
         with open('appsettings.json') as data_file:
             self.environment = json.load(data_file)
 
@@ -104,81 +119,129 @@ class Startup(object):
 
         return mod
 
+    def __register_for_listener(self, module: dict, klass: ListenerSubscriber):
+        if "listener_keywords" in module:
+            for keyword in module["listener_keywords"]:
+                self.listener_callbacks.update({keyword : klass.process_message})
+
+                if os.environ["magic_computer_debug"] == "true":
+                    print("Binding keyword '" + keyword + "' to module '" + module["name"] + "'")
+
+    def __configure_viewers(self):
+        ######Configuring the viewers######
+        for view in self.environment["views"]:
+            klass: Views = self.__load_view__(view["type"])
+
+            if "options" in view:
+                options = view["options"]
+            else:
+                options = None
+
+            self.views.append(klass(options))
+        ##################################
+
+    def __configure_algos(self):
+        #####Configuring the df algos#####
+        algo = self.environment["algo"]
+
+        klass: Algos = self.__load_algo__(algo["type"])
+
+        if "options" in algo:
+            options = algo["options"]
+        else:
+            options = None
+
+        self.algo: Algos = klass(self.datastore, options)
+
+        self.__register_for_listener(algo, self.algo)
+        #################################
+
+    def __confgiure_discriminators(self):
+        ##Configuring the discriminators##
+        discriminator = self.environment["discriminator"]
+        klass: Discriminators = self.__load_discriminator__(discriminator["type"])
+
+        if "options" in discriminator:
+            options = discriminator["options"]
+        else:
+            options = None
+
+        self.discriminator = klass(self.datastore, options)
+
+        self.__register_for_listener(discriminator, self.discriminator)
+        #################################
+
+    def __configure_locators(self):
+        #####Configuring the locators######
+        for locator in self.environment["locators"]:
+            klass: Locators = self.__load_locator__(locator["type"])
+
+            if "options" in locator:
+                options = locator["options"]
+            else:
+                options = None
+
+            locator_inst = klass(self.datastore, options)
+
+            self.locators.append(locator_inst)
+
+            self.__register_for_listener(locator, locator_inst)
+        ##################################
+
+    def __configure_receivers(self):
+        #####Configuring the receivers####
+        for receiver in self.environment["receivers"]:
+            klass = self.__load_receiver__(receiver["type"])
+
+            if "options" in receiver:
+                options = receiver["options"]
+            else:
+                options = None
+
+            receiver_inst = klass(self.controller, options)
+
+            self.receivers.append(receiver_inst)
+
+            self.__register_for_listener(receiver, receiver_inst)
+        #################################
+
     def configure(self) -> (Receivers, Locators, Discriminators, Algos, Views):
         """
         configures services
         """
-        #######Initialize Datastore#######
-        datastore = SignalDatastore()
-        ##################################
 
-        ######Configuring the viewer######
-        klass = self.__load_view__(self.environment["view"]["type"])
+        self.datastore = SignalDatastore()
 
-        if "options" in self.environment["view"]:
-            options = self.environment["view"]["options"]
-        else:
-            options = None
+        self.__configure_viewers()
 
-        self.view = klass(options)
-        ##################################
+        self.__configure_algos()
 
-        #####Configuring the df algo#####
-        klass = self.__load_algo__(self.environment["algo"]["type"])
+        self.__confgiure_discriminators()
 
-        if "options" in self.environment["algo"]:
-            options = self.environment["algo"]["options"]
-        else:
-            options = None
+        self.controller: Controller = Controller(self.datastore, self.discriminator, self.algo, self.views)
 
-        self.algo = klass(datastore, options)
-        #################################
+        self.__configure_locators()
 
-        ##Configuring the discriminator##
-        klass = self.__load_discriminator__(self.environment["discriminator"]["type"])
+        self.__configure_receivers()
 
-        if "options" in self.environment["discriminator"]:
-            options = self.environment["discriminator"]["options"]
-        else:
-            options = None
-
-        self.discriminator = klass(datastore, options)
-        #################################
-
-        #####Configuring the locator######
-        klass = self.__load_locator__(self.environment["locator"]["type"])
-
-        if "options" in self.environment["locator"]:
-            options = self.environment["locator"]["options"]
-        else:
-            options = None
-
-        self.locator = klass(options)
-        ##################################
-
-        ####Configuring the controller###
-        self.controller: Controller = Controller(self.locator, self.discriminator, self.algo, self.view)
-        #################################
-
-        #####Configuring the receiver####
-        klass = self.__load_receiver__(self.environment["receiver"]["type"])
-
-        if "options" in self.environment["receiver"]:
-            options = self.environment["receiver"]["options"]
-        else:
-            options = None
-
-        self.receiver = klass(self.controller, options)
-        #################################
-
-        return (self.receiver, self.locator, self.discriminator, self.algo, self.view)
+        return (self.receivers, self.locators, self.discriminator, self.algo, self.views)
 
     def start(self):
         """
         starts all services
         """
-        self.controller.start()
-        self.receiver.start()
+
+        for receiver in self.receivers:
+            receiver.start()
+
+        for locator in self.locators:
+            locator.start()
+
+        callback_count = len(self.listener_callbacks)
+
+        if callback_count > 0:
+            self.listener = Listener(self.environment["listener_port"], self.listener_callbacks)
+            self.listener.start()
 
         while True:
             time.sleep(7200)

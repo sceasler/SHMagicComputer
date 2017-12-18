@@ -1,32 +1,30 @@
 """
 Defines the Controller
 """
-import asyncio
+#import asyncio
+from typing import List
 from magic_computer_comms.data_model.algos import Algos
 from magic_computer_comms.data_model.discriminators import Discriminators
 from magic_computer_comms.data_model.views import Views
-from magic_computer_comms.data_model.locators import Locators
+from magic_computer_comms.datastore.signal_datastore import SignalDatastore
 
 class Controller(object):
     """
     Controls all the signal processing received from the receiver
     """
-    def __init__(self, locator, discriminator, algo, viewer):
-        self.locator: Locators = locator
+    def __init__(self, datastore: SignalDatastore, discriminator: Discriminators, algo: Algos, viewers: List[Views]):
+        self.datastore: SignalDatastore = datastore
         self.discriminator: Discriminators = discriminator
         self.algo: Algos = algo
-        self.viewer: Views = viewer
+        self.viewers: List[Views] = viewers
 
-    def start(self):
-        """
-        Starts all signal processing services
-        """
-        self.locator.start()
+    async def __process_command(self, command_data) -> None:
+        pass
 
-    async def __process_signal_detect__(self, signal_data):
-        position_data = self.locator.get_position_data()
+    def __process_signal_detect__(self, signal_data) -> None:
+        position_data = self.datastore.get_sensor_position()
 
-        if position_data is None:
+        if not bool(position_data):
             return
 
         pertinent_signal = self.discriminator.get_pertinent_signal(position_data, signal_data)
@@ -39,13 +37,25 @@ class Controller(object):
         if refined_position is None:
             return
 
-        self.viewer.update_view(pertinent_signal, refined_position)
+        for viewer in self.viewers:
+            viewer.update_view(pertinent_signal, refined_position)
+
+    def process_command(self, command_data):
+        """
+        Called when the user issues a command
+        """
+
+        self.__process_signal_detect__(command_data)
+
+        #loop = asyncio.get_event_loop()
+        #loop.run_until_complete(self.__process_signal_detect__(command_data))
 
     def process_signal_detect(self, signal_data):
         """
         Called by the receiver when new signal data is available
         """
 
-        loop = asyncio.get_event_loop()
+        self.__process_signal_detect__(signal_data)
 
-        loop.run_until_complete(self.__process_signal_detect__(signal_data))
+        #loop = asyncio.get_event_loop()
+        #loop.run_until_complete(self.__process_signal_detect__(signal_data))

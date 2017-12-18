@@ -8,21 +8,51 @@ class SignalDatastore(object):
     """
     Creates a signal datastore instance
     """
-    lock = threading.Lock()
+    datstore_lock = threading.Lock()
+    sensor_position_lock = threading.Lock()
 
     def __init__(self):
         self.__datastore = {}
+        self.__sensor_position = {}
+        self.__sensor_position["posX"] = 0
+        self.__sensor_position["posY"] = 0
+        self.__sensor_position["posZ"] = 0
+        self.__sensor_position["rotX"] = 0
+        self.__sensor_position["rotY"] = 0
+        self.__sensor_position["rotZ"] = 0
 
-    def new_signal(self, name):
+    def new_signal(self, name) -> None:
         """
         Adds a new signal to the datastore
         """
-        self.lock.acquire()
+        self.datstore_lock.acquire()
         if not name in self.__datastore:
             self.__datastore[name] = []
-        self.lock.release()
+        self.datstore_lock.release()
 
-    def update_position(self, name, receiver_data, calculated_position):
+    def update_sensor_position(self, position_data: dict) -> None:
+        """
+        Updates whole or partial position data for the sensor
+        """
+        keys = position_data.keys()
+
+        self.sensor_position_lock.acquire()
+        for key in keys:
+            self.__sensor_position[key] = position_data[key]
+        self.sensor_position_lock.release()
+
+    def get_sensor_position(self) -> dict:
+        """
+        Gets latest position data
+        """
+
+        self.sensor_position_lock.acquire()
+        ret_val: dict = self.__sensor_position
+        self.sensor_position_lock.release()
+
+        return ret_val
+
+    def update_position(self, name, receiver_data, calculated_position) -> None:
         """
         Adds new position data.
 
@@ -34,40 +64,40 @@ class SignalDatastore(object):
         """
         if not name in self.__datastore:
             self.new_signal(name)
-            
-        self.lock.acquire()
-        self.__datastore[name].append((receiver_data, calculated_position))
-        self.lock.release()
 
-    def get_latest_position(self, name):
+        self.datstore_lock.acquire()
+        self.__datastore[name].append((receiver_data, calculated_position))
+        self.datstore_lock.release()
+
+    def get_latest_position(self, name) -> dict:
         """
         Gets the last position.  Data is returned as a tuple of
         the calculated position, and the receiver id and position that detected it
         """
 
-        self.lock.acquire()
+        self.datstore_lock.acquire()
         data_length = len(self.__datastore[name])
         latest_position = self.__datastore[name][data_length - 1]
-        self.lock.release()
+        self.datstore_lock.release()
 
         return latest_position
 
-    def get_position_data(self, name):
+    def get_position_data(self, name) -> dict:
         """
         Returns the entire array of position data for a signal
         """
-        self.lock.acquire()
+        self.datstore_lock.acquire()
         position_data = self.__datastore[name]
-        self.lock.release()
+        self.datstore_lock.release()
 
         return position_data
 
-    def get_signal_names(self):
+    def get_signal_names(self) -> set:
         """
         Returns the names of every known signal
         """
-        self.lock.acquire()
+        self.datstore_lock.acquire()
         signal_name = self.__datastore.keys()
-        self.lock.release()
+        self.datstore_lock.release()
 
         return signal_name

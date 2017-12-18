@@ -1,7 +1,8 @@
 """
 A test receiver formatter
 """
-
+#import asyncio
+import threading
 import time
 import os
 from magic_computer_comms.data_model.receivers import Receivers
@@ -13,10 +14,14 @@ class TestReceiver(Receivers):
     """
     def __init__(self, controller, options):
         super(TestReceiver, self).__init__(controller, options)
-        host = options["receiver_host"]
-        port = int(options["receiver_port"])
 
-        self.server = ThreadedServer(host, port, self.controller.process_signal_detect)
+        if not options is None:
+            host = options["receiver_host"]
+            port = int(options["receiver_port"])
+
+            self.server = ThreadedServer(host, port, self.controller.process_signal_detect)
+        else:
+            self.server = None
 
     def data_push(self):
         """
@@ -27,15 +32,17 @@ class TestReceiver(Receivers):
         while True:
             self.controller.process_signal_detect(data)
             time.sleep(1)
-            #await asyncio.sleep(2)
+            #await asyncio.sleep(1.0)
 
     def start(self):
         """
         Begins to listen to receive events
         """
-        self.server.listen()
 
-        if os.environ["magic_computer_debug"] == "true":
-            print("Receiver listener started on port " + str(self.server.port))
+        if not self.server is None:
+            self.server.listen()
 
-        self.data_push()
+            if os.environ["magic_computer_debug"] == "true":
+                print("Receiver listener started on port " + str(self.server.port))
+
+        threading.Thread(target=self.data_push).start()

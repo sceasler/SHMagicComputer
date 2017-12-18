@@ -3,59 +3,52 @@ Provides the interface for interacting with
 The Microsoft Hololens for location
 """
 
-import json
-import os
+#import json
+#import os
 from magic_computer_comms.data_model.locators import Locators
-from magic_computer_comms.io.comm_sender import ThreadedSender
-from magic_computer_comms.io.comm_server import ThreadedServer
+#from magic_computer_comms.io.comm_sender import ThreadedSender
+#from magic_computer_comms.io.comm_server import ThreadedServer
+#from magic_computer_comms.datastore.signal_datastore import SignalDatastore
 
 class HoloLensLocator(Locators):
     """
     Defines the interface for the HoloLens location service
     """
 
-    def __init__(self, options):
-        super(HoloLensLocator, self).__init__(options)
+    # def __init__(self, datastore: SignalDatastore, options):
+    #     super(HoloLensLocator, self).__init__(datastore, options)
 
-        if "send_host" in options:
-            s_host = options["send_host"]
-        else:
-            s_host = None
+    #     if not options is None:
+    #         if "send_host" in options:
+    #             s_host = options["send_host"]
+    #         else:
+    #             s_host = None
 
-        if "send_port" in options:
-            s_port = int(options["send_port"])
-        else:
-            s_port = None
+    #         if "send_port" in options:
+    #             s_port = int(options["send_port"])
+    #         else:
+    #             s_port = None
 
-        r_host = options["receive_host"]
-        r_port = int(options["receive_port"])
+    #         r_host = options["receive_host"]
+    #         r_port = int(options["receive_port"])
 
-        if not (s_host is None or s_port is None):
-            self.sender = ThreadedSender(s_host, s_port)
+    #         if not (s_host is None or s_port is None):
+    #             self.sender = ThreadedSender(s_host, s_port)
 
-            if os.environ['magic_computer-debug'] == "true":
-                print("Set up to send locator requests to UDP " + s_host + ":" + s_port)
+    #             if os.environ['magic_computer-debug'] == "true":
+    #                 print("Set up to send locator requests to UDP " + s_host + ":" + s_port)
 
-        self.receiver = ThreadedServer(r_host, r_port, self.receive_data)
+    #         self.receiver = ThreadedServer(r_host, r_port, self.receive_data)
+    #     else:
+    #         self.receiver = None
 
-        self.received_data = {}
-        self.received_data["posX"] = 0
-        self.received_data["posY"] = 0
-        self.received_data["posZ"] = 0
-        self.received_data["rotX"] = 0
-        self.received_data["rotY"] = 0
-        self.received_data["rotZ"] = 0
-        self.received_data["id"] = "None"
+    def process_message(self, message: dict):
+        super(HoloLensLocator, self).process_message(message)
+        self.datastore.update_sensor_position(self.__parse_json(message))
 
-    def parse_locator(self, message: bytearray):
-        #parse into string
-        message_string = message.decode('utf_8')
-        message_json = json.loads(message_string)
-
+    def __parse_json(self, message_json: dict) -> dict:
         if "msgType" in message_json:
-            if message_json["msgType"] == "PosRotMsg":
-                return message_json
-            if message_json["msgType"] == "PosUpdate":
+            if message_json["msgType"] == "PosRotMsg" or message_json["msgType"] == "PosUpdate":
                 return message_json
 
         if "messageType" in message_json:
@@ -67,11 +60,19 @@ class HoloLensLocator(Locators):
 
         return None
 
-    def start(self):
-        """
-        Starts the Locator listener
-        """
-        self.receiver.listen()
+    # def parse_locator(self, message: bytearray):
+    #     #parse into string
+    #     message_string = message.decode('utf_8')
+    #     message_json = json.loads(message_string)
 
-        if os.environ["magic_computer_debug"] == "true":
-            print("locator listener started on port " + str(self.receiver.port))
+    #     return self.__parse_json(message_json)
+
+    # def start(self):
+    #     """
+    #     Starts the Locator listener
+    #     """
+    #     if not self.receiver is None:
+    #         self.receiver.listen()
+
+    #         if os.environ["magic_computer_debug"] == "true":
+    #             print("locator listener started on port " + str(self.receiver.port))

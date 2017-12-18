@@ -3,9 +3,10 @@ Template for all Discriminators, which
 identify which signal has been detected
 """
 
+from magic_computer_comms.data_model.listener_subscriber import ListenerSubscriber
 from magic_computer_comms.datastore.signal_datastore import SignalDatastore
 
-class Discriminators(object):
+class Discriminators(ListenerSubscriber):
     """
     Template discriminator.  All discriminators inherit from this
     """

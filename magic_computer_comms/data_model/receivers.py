@@ -2,9 +2,10 @@
 Template for all receiver formatters
 """
 
+from magic_computer_comms.data_model.listener_subscriber import ListenerSubscriber
 from magic_computer_comms.controller.controller import Controller
 
-class Receivers(object):
+class Receivers(ListenerSubscriber):
     """
     All receiver formatters inherit from here.  This will
     convert data from a receiver into a common format and
