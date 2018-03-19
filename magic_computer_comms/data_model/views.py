@@ -2,6 +2,7 @@
 Super-type of all views
 """
 import os
+from magic_computer_comms.data_model.position_data import PositionData
 
 class Views(object):
     """
@@ -10,14 +11,14 @@ class Views(object):
     def __init__(self, options: dict):
         self.options = options
 
-    def update_view(self, pertinent_signal: str, refined_position: dict) -> None:
+    def update_view(self, pertinent_signal: str, refined_position: PositionData, additional_data: dict) -> None:
         """
         Provides logic for formatting requests
         """
         if os.environ["magic_computer_debug"] == "true":
-            xpos = refined_position["posX"]
-            ypos = refined_position["posY"]
-            zpos = refined_position["posZ"]
+            xpos = refined_position.posX
+            ypos = refined_position.posY
+            zpos = refined_position.posZ
 
             pos_string = str(xpos) + ", " + str(ypos) + ", " + str(zpos)
 

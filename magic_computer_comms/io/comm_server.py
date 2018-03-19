@@ -4,6 +4,7 @@ Listens for data from clients and sends input to processor
 
 import socket
 import threading
+import os
 
 class ThreadedServer(object):
     """
@@ -23,6 +24,9 @@ class ThreadedServer(object):
         """
         Starts thread that listens for communication on UDP port
         """
+        if os.environ["magic_computer_debug"] == "true":
+            print("Creating threaded listener")
+
         threading.Thread(target=self.__listen_to_client).start()
 
     def __listen_to_client(self):
@@ -32,5 +36,11 @@ class ThreadedServer(object):
         size = 1024
         while True:
             raw_data = self.sock.recv(size)
+
+            if os.environ["magic_computer_debug"] == "true":
+                print("Creating listening processor thread")
+
+            # thread = threading.Thread(target=self.processor, args=[raw_data])
+            # thread.
 
             threading.Thread(target=self.processor, args=[raw_data]).start()

@@ -6,6 +6,20 @@ import json
 import os
 from magic_computer_comms.data_model.views import Views
 from magic_computer_comms.io.comm_sender import ThreadedSender
+from magic_computer_comms.data_model.position_data import PositionData
+
+class ViewerMessage(object):
+    def __init__(self, id: str, msgType: str, position: PositionData, additional_data: dict):
+        self.id = id
+        self.msgType = msgType
+        self.position = position
+        self.additional_data = additional_data
+
+    def serialize(self, encoding: str) -> str:
+        ret_val = self.__dict__
+        ret_val["position"] = self.position.__dict__
+
+        return json.dumps(ret_val).encode(encoding)
 
 class HoloLensView(Views):
     """
@@ -22,10 +36,12 @@ class HoloLensView(Views):
         if os.environ['magic_computer_debug'] == "true":
             print("set up to use view at " + host + ":" + str(port) + " using UDP")
 
-    def update_view(self, pertinent_signal, refined_position):
-        super(HoloLensView, self).update_view(pertinent_signal, refined_position)
+    def update_view(self, pertinent_signal, refined_position, additional_data):
+        super(HoloLensView, self).update_view(pertinent_signal, refined_position, additional_data)
 
         refined_position["id"] = pertinent_signal #["messageType"]
         refined_position["msgType"] = "PosUpdate" #"PosUpdate"
 
-        self.sender.send_to_client(json.dumps(refined_position).encode('utf_8'))
+        message = ViewerMessage(pertinent_signal, "PosUpdate", refined_position, additional_data)
+
+        self.sender.send_to_client(message.serialize('utf-8'))
