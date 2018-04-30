@@ -17,6 +17,8 @@ class Receivers(ListenerSubscriber):
 
     def start(self) -> None:
         """
+        ABSTRACT
+
         Begins to listen to receive events
         """
         pass

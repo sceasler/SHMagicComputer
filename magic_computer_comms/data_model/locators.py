@@ -48,6 +48,8 @@ class Locators(ListenerSubscriber):
 
     def start(self) -> None:
         """
+        ABSTRACT
+
         Starts the Locator listener
         """
         pass

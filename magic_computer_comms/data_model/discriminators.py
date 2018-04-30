@@ -16,6 +16,8 @@ class Discriminators(ListenerSubscriber):
 
     def get_pertinent_signal(self, position_data: dict, signal_data: dict, additional_data: dict) -> Tuple[str,dict]:
         """
+        ABSTRACT
+
         Method to determine which signal was detected
 
         This method must return a tuyple with a string labeling the signal name, and a dictionary of the additional data

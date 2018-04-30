@@ -16,6 +16,8 @@ class Algos(ListenerSubscriber):
 
     def refine_position(self, signal_id: str, position_data: dict, additional_data: dict) -> Tuple[PositionData, dict]:
         """
+        ABSTRACT
+
         Executes refinement algorithm and returns updated position data
 
         return value is a tuple with a PositionData and the additional data
