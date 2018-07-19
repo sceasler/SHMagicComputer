@@ -29,24 +29,24 @@ class PositionData(MetaPositionData):
         self.rotY = '0'
         self.rotZ = '0'
 
-    def update_position(self, updated_position: MetaPositionData):
-        if updated_position.posX != None:
-            self.posX = updated_position.posX
+    def update_position(self, updated_position: dict):
+        if updated_position['posX'] != None:
+            self.posX = updated_position['posX']
 
-        if updated_position.posY != None:
-            self.posX = updated_position.posY
+        if updated_position['posY'] != None:
+            self.posY = updated_position['posY']
 
-        if updated_position.posZ != None:
-            self.posX = updated_position.posZ
+        if updated_position['posZ'] != None:
+            self.posZ = updated_position['posZ']
 
-        if updated_position.rotX != None:
-            self.posX = updated_position.rotX
+        if updated_position['rotX'] != None:
+            self.rotX = updated_position['rotX']
 
-        if updated_position.rotY != None:
-            self.posX = updated_position.rotY            
+        if updated_position['rotY'] != None:
+            self.rotY = updated_position['rotY']            
 
-        if updated_position.posZ != None:
-            self.posX = updated_position.posZ
+        if updated_position['posZ'] != None:
+            self.rotZ = updated_position['posZ']
 
     def __getitem__(self, key):
         if key == "posX":
