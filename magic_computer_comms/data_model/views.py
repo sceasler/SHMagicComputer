@@ -19,7 +19,10 @@ class Views(object):
             xpos = refined_position.posX
             ypos = refined_position.posY
             zpos = refined_position.posZ
+            xrot = refined_position.rotX
+            yrot = refined_position.rotY
+            zrot = refined_position.rotZ
 
-            pos_string = str(xpos) + ", " + str(ypos) + ", " + str(zpos)
+            pos_string = str(xpos) + ", " + str(ypos) + ", " + str(zpos) + ", " + str(xrot) + ", " + str(yrot) + ", " + str(zrot)
 
             print("Sending position update for signal " + pertinent_signal + " of " + pos_string)

@@ -14,7 +14,7 @@ class Algos(ListenerSubscriber):
         self.signal_datastore = signal_datastore
         self.options = options
 
-    def refine_position(self, signal_id: str, position_data: dict, additional_data: dict) -> Tuple[PositionData, dict]:
+    def refine_position(self, signal_id: str, position_data: PositionData, signal_data: PositionData, additional_data: dict) -> Tuple[PositionData, dict]:
         """
         ABSTRACT
 

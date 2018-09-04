@@ -21,6 +21,17 @@ class ViewerMessage(object):
 
         return json.dumps(ret_val).encode(encoding)
 
+class BasicViewerMessage(object):
+    def __init__(self, id: int, msgType: str, angle: float):
+        self.id = id
+        self.angle = angle
+        self.msgType = msgType
+
+    def serialize(self, encoding: str) -> str:
+        ret_val = self.__dict__
+        
+        return json.dumps(ret_val).encode(encoding)
+
 class HoloLensView(Views):
     """
     Provides formatting data for sending data to the HoloLens
@@ -36,12 +47,15 @@ class HoloLensView(Views):
         if os.environ['magic_computer_debug'] == "true":
             print("set up to use view at " + host + ":" + str(port) + " using UDP")
 
-    def update_view(self, pertinent_signal, refined_position, additional_data):
+    def update_view(self, pertinent_signal, refined_position: PositionData, additional_data):
         super(HoloLensView, self).update_view(pertinent_signal, refined_position, additional_data)
 
         refined_position["id"] = pertinent_signal #["messageType"]
-        refined_position["msgType"] = "PosUpdate" #"PosUpdate"
+        refined_position["msgType"] = "LobUpdate" #"PosUpdate"
 
-        message = ViewerMessage(pertinent_signal, "PosUpdate", refined_position, additional_data)
+        #message = ViewerMessage(pertinent_signal, "PosUpdate", refined_position, additional_data)
+        message = BasicViewerMessage(int(pertinent_signal), "LobUpdate", float(refined_position.rotX))
 
-        self.sender.send_to_client(message.serialize('utf-8'))
+        serializedMessage = message.serialize('utf-8')
+
+        self.sender.send_to_client(serializedMessage)

@@ -9,6 +9,7 @@ import json
 from magic_computer_comms.data_model.receivers import Receivers
 from magic_computer_comms.io.comm_server import ThreadedServer
 from magic_computer_comms.data_model.optioned_signal_data import OptionedSignalData
+from magic_computer_comms.data_model.position_data import PositionData
 from magic_computer_comms.controller.controller import Controller
 
 class E310Receiver(Receivers):
@@ -29,7 +30,17 @@ class E310Receiver(Receivers):
     def send_to_controller(self, signal_data: bytearray):
         #take received data  and convert to OptionedsignalData
 
-        ret_val = OptionedSignalData()
+        string_data = signal_data.decode('UTF-8')
+
+        ret_val = OptionedSignalData(string_data)
+
+        optional_data = {'signal_strength': str(ret_val.raw_data["signalStrength"])}
+
+        positioned_data = PositionData()
+        positioned_data.rotX = str(ret_val.raw_data["aoa"])
+
+        ret_val.optional_data = optional_data
+        ret_val.signal_data = positioned_data
 
         self.controller.process_signal_detect(ret_val)
 

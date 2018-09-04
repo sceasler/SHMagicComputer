@@ -10,6 +10,7 @@ from magic_computer_comms.data_model.receivers import Receivers
 from magic_computer_comms.io.comm_server import ThreadedServer
 from magic_computer_comms.data_model.optioned_signal_data import OptionedSignalData
 from magic_computer_comms.controller.controller import Controller
+from magic_computer_comms.data_model.position_data import PositionData
 
 class TestReceiver(Receivers):
     """
@@ -39,7 +40,15 @@ class TestReceiver(Receivers):
         """
 
         data = OptionedSignalData()
-        data.signal_data = "test"
+        data.signal_data = PositionData()
+
+        data.signal_data.posX = "0"
+        data.signal_data.posY = "0"
+        data.signal_data.posZ = "0"
+        data.signal_data.rotX = "0"
+        data.signal_data.rotY = "0"
+        data.signal_data.rotZ = "0"
+
         data.optional_data = "optioned"
 
         while True:

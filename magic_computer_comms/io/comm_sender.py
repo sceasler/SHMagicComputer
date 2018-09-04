@@ -3,6 +3,7 @@ Sends generic data via UDP
 """
 
 import asyncio
+import os
 import socket
 #import threading
 
@@ -19,6 +20,8 @@ class ThreadedSender(object):
         """
         Synchronous send of message to host
         """
+        if os.environ["magic_computer_debug"] == "true":
+            print("sending message to host " + self.host + " on port " + str(self.port))
 
         self.sock.sendto(message, (self.host, self.port))
 

@@ -40,7 +40,7 @@ class Controller(object):
         if pertinent_signal is None:
             return
 
-        refined_position, additional_data = self.algo.refine_position(pertinent_signal, position_data, additional_data)
+        refined_position, additional_data = self.algo.refine_position(pertinent_signal, position_data, signal_data, additional_data)
 
         if refined_position is None:
             return
