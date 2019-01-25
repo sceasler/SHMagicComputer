@@ -7,8 +7,8 @@ import os
 import subprocess
 import time
 import threading
-from pyvisa.errors import VisaIOError
-import visa
+#from pyvisa.errors import VisaIOError
+#import visa
 from magic_computer_comms.data_model.locators import Locators
 from magic_computer_comms.datastore.signal_datastore import SignalDatastore
 
@@ -50,7 +50,7 @@ class Dfa0047Locator(Locators):
 
         p = subprocess.Popen([self.signal_vu_path])
 
-        self.resource_manager = visa.ResourceManager(self.resource_manager_path)
+        #self.resource_manager = visa.ResourceManager(self.resource_manager_path)
 
         if os.environ["magic_computer_debug"] == "true":
             print("Waiting for instrument to load")
@@ -67,7 +67,7 @@ class Dfa0047Locator(Locators):
                 time.sleep(5)
                 self.inst = self.resource_manager.open_resource(instruments[0])
                 start_continue = True
-            except VisaIOError:
+            except:
                 start_continue = False
 
         if os.environ["magic_computer_debug"] == "true":
