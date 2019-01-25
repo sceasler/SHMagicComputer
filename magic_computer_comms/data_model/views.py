@@ -1,6 +1,7 @@
 """
 Super-type of all views
 """
+import json
 import os
 from magic_computer_comms.data_model.position_data import PositionData
 
@@ -26,3 +27,4 @@ class Views(object):
             pos_string = str(xpos) + ", " + str(ypos) + ", " + str(zpos) + ", " + str(xrot) + ", " + str(yrot) + ", " + str(zrot)
 
             print("Sending position update for signal " + pertinent_signal + " of " + pos_string)
+            print("optional data: " + json.dumps(additional_data))

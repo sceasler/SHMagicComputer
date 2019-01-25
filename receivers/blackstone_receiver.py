@@ -28,8 +28,17 @@ class BlackstoneReceiver(Receivers):
         tune_string = "FRQ " + str(freq) + ";\n\r"
 
         self.server = TelnetClient(host, port)
-        self.server.send("\n\r")
+        #self.server.send_void("\n\r")
+        bwc_back = self.server.send("BWC?\n\r")
+        
         self.server.send(init_string)
+
+        while bwc_back != "BWC 00.010\r\n":
+            self.server.send(init_string)
+            time.sleep(1)
+            bwc_back = self.server.send("BWC?\n\r").decode('ascii')
+
+
         self.server.send(tune_string)
         self.server.send("LOB?;\n\r")
 
@@ -40,8 +49,11 @@ class BlackstoneReceiver(Receivers):
 
         string_data = signal_data.split(',')
 
+        bearing_array = string_data[0].split(' ')
+
+
         data_object = {
-            'Bearing': string_data[0],
+            'Bearing': bearing_array[1],
             'STD': string_data[1],
             'SignalStrength': string_data[2], 
             'IntegrationTime': string_data[3],
@@ -56,7 +68,11 @@ class BlackstoneReceiver(Receivers):
 
         ret_val = OptionedSignalData(json.dumps(data_object))
 
-        optional_data = {'signal_strength': str(ret_val.raw_data["signalStrength"])}
+        optional_data = {
+            'signal_strength': str(ret_val.raw_data["SignalStrength"]),
+            'standard_deviation': str(ret_val.raw_data["STD"]),
+            'integration_time': str(ret_val.raw_data["IntegrationTime"])
+            }
 
         positioned_data = PositionData()
         positioned_data.rotX = str(ret_val.raw_data["Bearing"])
@@ -80,9 +96,13 @@ class BlackstoneReceiver(Receivers):
         """
 
         while True:
-            server_send_task = asyncio.create_task(self.server.send_async("DFI?;\n\r"))
+            #server_send_task = asyncio.create_task(self.server.send_async("DFI?;\n\r"))
 
-            dfi: str = await server_send_task
+            #response = await server_send_task
+
+            response = self.server.send("DFI?;\n\r")
+
+            dfi: str = response.decode('ascii').rstrip()
             self.send_to_controller(dfi)
             await asyncio.sleep(1.0)
 
@@ -90,6 +110,8 @@ class BlackstoneReceiver(Receivers):
         """
         Begins to listen to receive events
         """
+
+        #response = self.server.send("DFI?;\n\r")
 
         asyncio.run(self.data_push())        
 

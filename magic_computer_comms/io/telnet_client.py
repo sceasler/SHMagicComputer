@@ -14,18 +14,21 @@ class TelnetClient(object):
         if os.environ["magic_computer_debug"] == "true":
             print("Connecting to " + host + " on port " + str(port))
 
-        self.tn: Telnet = Telnet(host, port, timeout)
+        self.tn: Telnet = Telnet(host, port)
 
     def send(self, message: str) -> str:
         if os.environ["magic_computer_debug"] == "true":
             print("Sending " + message)
         
-        self.tn.write(message)
+        self.tn.write(message.encode('ascii'))
 
-        return self.tn.read_all()
+        if os.environ["magic_computer_debug"] == "true":
+            print("Awaiting response")
 
-    async def send_async(self, message: str) -> str:
-        return await asyncio.wait(self.send(message))
+        return self.tn.read_until('\r\n'.encode('ascii'), 2)
+
+    # async def send_async(self, message: str) -> str:
+    #     return await asyncio.run(self.send(message))
 
     def shutdown(self) -> None:
         self.tn.close()
