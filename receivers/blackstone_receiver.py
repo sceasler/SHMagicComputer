@@ -28,6 +28,8 @@ class BlackstoneReceiver(Receivers):
         tune_string = "FRQ " + str(freq) + ";\n\r"
 
         self.server = TelnetClient(host, port)
+        self.std_threshold = float(options["std_threshold"])
+        self.strength_treshold = float(options["strength_threshold"])
         #self.server.send_void("\n\r")
         bwc_back = self.server.send("BWC?\n\r")
         
@@ -37,6 +39,8 @@ class BlackstoneReceiver(Receivers):
             self.server.send(init_string)
             time.sleep(1)
             bwc_back = self.server.send("BWC?\n\r").decode('ascii')
+            if os.environ["magic_computer_debug"] == "true":
+                print("received " + bwc_back)
 
 
         self.server.send(tune_string)
@@ -51,9 +55,15 @@ class BlackstoneReceiver(Receivers):
 
         bearing_array = string_data[0].split(' ')
 
+        bearing = float(bearing_array[1])
+
+        #bearing = bearing * -1
+
+        #if bearing < 0:
+        #    bearing = 360 + bearing
 
         data_object = {
-            'Bearing': bearing_array[1],
+            'Bearing': str(bearing),
             'STD': string_data[1],
             'SignalStrength': string_data[2], 
             'IntegrationTime': string_data[3],
@@ -63,32 +73,47 @@ class BlackstoneReceiver(Receivers):
             'Heading': string_data[7],
             'Speed': string_data[8],
             'OneValid': string_data[9],
-            "CompassHdg": string_data[10]
+            "Frequency": string_data[10],
+            "CompassHdg": string_data[11]
         }
 
         ret_val = OptionedSignalData(json.dumps(data_object))
 
-        optional_data = {
-            'signal_strength': str(ret_val.raw_data["SignalStrength"]),
-            'standard_deviation': str(ret_val.raw_data["STD"]),
-            'integration_time': str(ret_val.raw_data["IntegrationTime"])
+        std_float = float(string_data[1])
+        signal_strength = float(string_data[2])
+
+        if std_float <= self.std_threshold and signal_strength >= self.strength_treshold:
+            if os.environ["magic_computer_debug"] == "true":
+                print("Signal threshold reached")
+
+            optional_data = {
+                'signal_strength': str(ret_val.raw_data["SignalStrength"]),
+                'standard_deviation': str(ret_val.raw_data["STD"]),
+                'integration_time': str(ret_val.raw_data["IntegrationTime"]),
+                'heading': str(ret_val.raw_data['Heading'])
             }
 
-        positioned_data = PositionData()
-        positioned_data.rotX = str(ret_val.raw_data["Bearing"])
+            positioned_data = PositionData()
+            positioned_data.rotX = str(ret_val.raw_data["Bearing"])
 
-        ret_val.optional_data = optional_data
-        ret_val.signal_data = positioned_data
+            ret_val.optional_data = optional_data
+            ret_val.signal_data = positioned_data
 
-        sensor_position = PositionData()
-        sensor_position.posZ = '0'
-        sensor_position.posX = ret_val.raw_data['Lon']
-        sensor_position.posY = ret_val.raw_data['Lat']
-        sensor_position.rotX = ret_val.raw_data['CompassHdg']
+            sensor_position = PositionData()
+            sensor_position.posZ = '0'
+            sensor_position.posX = ret_val.raw_data['Lon']
+            sensor_position.posY = ret_val.raw_data['Lat']
+            sensor_position.rotX = ret_val.raw_data['CompassHdg']
 
-        self.controller.datastore.update_sensor_position(sensor_position)
+            self.controller.datastore.update_sensor_position(sensor_position)
 
-        self.controller.process_signal_detect(ret_val)
+            self.controller.process_signal_detect(ret_val)
+        elif os.environ["magic_computer_debug"] == "true":
+            print("signal received is below std threshold")
+            print("std " + str(std_float))
+            print("strength " + str(signal_strength))
+
+
 
     async def data_push(self):
         """
