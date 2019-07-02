@@ -24,7 +24,7 @@ class BlackstoneReceiver(Receivers):
         bwc = float(options["bandwidth"])
         freq = float(options["frequency"])
         
-        init_string: str = "AFC 1;BWC " + str(bwc) + ";AGC 1;DFT 04;DFA 0;DFO 1;\n\r"
+        init_string: str = "AFC 1;BWC " + str(bwc) + ";AGC 1;DFT 02;DFO 1;\n\r"
         tune_string = "FRQ " + str(freq) + ";\n\r"
 
         self.server = TelnetClient(host, port)
@@ -55,7 +55,16 @@ class BlackstoneReceiver(Receivers):
 
         bearing_array = string_data[0].split(' ')
 
-        bearing = float(bearing_array[1])
+        #Edit the below offset value if the receiver isn't accurate
+        bearing = float(bearing_array[1])# - 5
+
+        if bearing > 180:
+            overlap = bearing - 180
+            bearing = -180 + overlap
+
+        if bearing < -180:
+            overlap = bearing + 180
+            bearing = 180 + overlap
 
         #bearing = bearing * -1
 
