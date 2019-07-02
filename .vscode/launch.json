@@ -9,7 +9,6 @@
             "name": "Python",
             "type": "python",
             "request": "launch",
-            "stopOnEntry": true,
             "pythonPath": "${config:python.pythonPath}",
             "program": "${workspaceRoot}/main.py",
             "cwd": "${workspaceRoot}",
