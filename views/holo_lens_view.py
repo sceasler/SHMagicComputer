@@ -22,10 +22,11 @@ class ViewerMessage(object):
         return json.dumps(ret_val).encode(encoding)
 
 class BasicViewerMessage(object):
-    def __init__(self, id: int, msgType: str, angle: float):
+    def __init__(self, id: int, msgType: str, angle: float):#, optional_data: dict):
         self.id = id
         self.angle = angle
         self.msgType = msgType
+        #self.optional_data = optional_data
 
     def serialize(self, encoding: str) -> str:
         ret_val = self.__dict__
@@ -53,7 +54,8 @@ class HoloLensView(Views):
         refined_position["id"] = pertinent_signal #["messageType"]
         refined_position["msgType"] = "LobUpdate" #"PosUpdate"
 
-        #message = ViewerMessage(pertinent_signal, "PosUpdate", refined_position, additional_data)
+        #message = ViewerMessage(int(pertinent_signal), "PosUpdate", refined_position, additional_data)
+        #message = BasicViewerMessage(int(pertinent_signal), "LobUpdate", float(refined_position.rotX), additional_data)
         message = BasicViewerMessage(int(pertinent_signal), "LobUpdate", float(refined_position.rotX))
 
         serializedMessage = message.serialize('utf-8')

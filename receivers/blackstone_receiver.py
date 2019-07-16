@@ -53,10 +53,18 @@ class BlackstoneReceiver(Receivers):
 
         string_data = signal_data.split(',')
 
+        if not isinstance(string_data, list):
+            print("WARNING: Invalid data received")
+            return
+
         bearing_array = string_data[0].split(' ')
 
+        if not isinstance(bearing_array, list) or not len(bearing_array) > 1:
+            print("WARNING: Invalid data received")
+            return
+
         #Edit the below offset value if the receiver isn't accurate
-        bearing = float(bearing_array[1])# - 5
+        bearing = float(bearing_array[1]) + 94
 
         if bearing > 180:
             overlap = bearing - 180
