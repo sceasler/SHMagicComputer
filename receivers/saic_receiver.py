@@ -37,8 +37,11 @@ class SaicReceiver(Receivers):
     """
 
     def get_bearing(self, lat1: float, lat2: float, lon1: float, lon2: float):
-        bearing = math.atan2(math.sin(lon2 - lon1) * math.cos(lat2), math.cos(lat1) * math.sin(lat2) - math.sin(lat1) * math.cos(lat2) * math.cos(lon2 - lon1))
+        y_value = math.sin(lon2 - lon1) * math.cos(lat2)
+        x_value = math.cos(lat1) * math.sin(lat2) - math.sin(lat1) * math.cos(lat2) * math.cos(lon2 - lon1)
+        bearing = math.atan2(y_value, x_value)
         
+        #the -180 is a hack
         bearing = bearing * (-180 / math.pi)
 
         #bearing = (bearing + 360) % 360
